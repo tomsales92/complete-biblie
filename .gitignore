@@ -1,0 +1,6 @@
+# frontend/ is its own separate git repository (github.com/tomsales92/leitura-biblia)
+frontend/
+
+.DS_Store
+firebase-debug.log
+server/node_modules/
