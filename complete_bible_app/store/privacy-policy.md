@@ -1,6 +1,6 @@
 # Política de Privacidade — Compute Bible
 
-**Última atualização:** 21 de julho de 2026
+**Última atualização:** 15 de setembro de 2026
 
 Esta Política de Privacidade descreve como o aplicativo **Compute Bible** ("nós", "nosso" ou "app") coleta, usa e protege as informações dos usuários.
 
@@ -8,7 +8,7 @@ Esta Política de Privacidade descreve como o aplicativo **Compute Bible** ("nó
 
 O Compute Bible é um aplicativo de acompanhamento de leitura bíblica, que ajuda o usuário a marcar capítulos lidos e acompanhar seu progresso do Gênesis ao Apocalipse.
 
-Contato: [e-mail de suporte a definir]
+Contato: everton.goncalves92@gmail.com
 
 ## 2. Informações que coletamos
 
@@ -45,9 +45,9 @@ Utilizamos o Google Firebase como provedor de infraestrutura (autenticação e b
 
 Você pode, a qualquer momento:
 
-- Solicitar a exclusão da sua conta e de todos os dados associados, entrando em contato pelo e-mail de suporte;
-- Solicitar uma cópia dos seus dados;
-- Corrigir informações incorretas do seu perfil.
+- Excluir sua conta diretamente pelo app, em Configurações → Excluir conta. Isso remove permanentemente seu perfil e todo o seu histórico de leitura;
+- Solicitar uma cópia dos seus dados, entrando em contato pelo e-mail de suporte;
+- Corrigir informações incorretas do seu perfil diretamente no app.
 
 ## 7. Crianças
 
@@ -59,4 +59,4 @@ Podemos atualizar esta política periodicamente. A data da última atualização
 
 ## 9. Contato
 
-Dúvidas sobre esta política podem ser enviadas para: [e-mail de suporte a definir]
+Dúvidas sobre esta política podem ser enviadas para: everton.goncalves92@gmail.com
