@@ -1,4 +1,4 @@
-package com.evertonsales.computebible
+package com.evertonsales.completebible
 
 import io.flutter.embedding.android.FlutterActivity
 

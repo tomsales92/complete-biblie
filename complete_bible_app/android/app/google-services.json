@@ -26,9 +26,28 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:707062345977:android:b16611b8db3decd277f228",
+        "android_client_info": {
+          "package_name": "com.evertonsales.completebible"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAz2gxQLFprsnwEl4nPq5zc8BovSV1PlgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:707062345977:android:52a2bb747bf2f89277f228",
         "android_client_info": {
-          "package_name": "com.evertonsales.computebible"
+          "package_name": "com.evertonsales.degenapo"
         }
       },
       "oauth_client": [],

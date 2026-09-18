@@ -51,17 +51,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAz2gxQLFprsnwEl4nPq5zc8BovSV1PlgM',
-    appId: '1:707062345977:android:52a2bb747bf2f89277f228',
+    appId: '1:707062345977:android:b16611b8db3decd277f228',
     messagingSenderId: '707062345977',
     projectId: 'leitura-biblia-a2188',
     storageBucket: 'leitura-biblia-a2188.firebasestorage.app',
   );
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyD3svrZzWJ2V7dY-dfQ-YMdKghrzvz-diM',
-    appId: '1:707062345977:ios:e68df2d40852307d77f228',
+    appId: '1:707062345977:ios:3d46e8db3399bb4077f228',
     messagingSenderId: '707062345977',
     projectId: 'leitura-biblia-a2188',
     storageBucket: 'leitura-biblia-a2188.firebasestorage.app',
-    iosBundleId: 'com.evertonsales.computebible',
+    iosBundleId: 'com.evertonsales.completebible',
   );
 }
