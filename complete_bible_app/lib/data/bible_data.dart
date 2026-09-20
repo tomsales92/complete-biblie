@@ -1,3 +1,7 @@
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+
+import '../l10n/app_localizations.dart';
 import '../models/bible_book.dart';
 import '../models/panorama.dart';
 import '../models/read_entry.dart';
@@ -72,7 +76,10 @@ const List<BibleBook> bibleBooks = [
   BibleBook(name: 'Apocalipse', chapters: 22),
 ];
 
-final int totalChapters = bibleBooks.fold(0, (sum, book) => sum + book.chapters);
+final int totalChapters = bibleBooks.fold(
+  0,
+  (sum, book) => sum + book.chapters,
+);
 
 BibleBook? findBook(String name) {
   for (final book in bibleBooks) {
@@ -96,23 +103,26 @@ String _daysAgoDateString(int daysAgo) {
   return formatDate(DateTime.now().subtract(Duration(days: daysAgo)));
 }
 
-String formatDateLabel(String dateStr) {
-  if (dateStr == todayDateString()) return 'Hoje';
-  if (dateStr == _daysAgoDateString(1)) return 'Ontem';
+String formatDateLabel(BuildContext context, String dateStr) {
+  final l10n = AppLocalizations.of(context);
+  if (dateStr == todayDateString()) return l10n.today;
+  if (dateStr == _daysAgoDateString(1)) return l10n.yesterday;
 
-  final parts = dateStr.split('-');
-  return '${parts[2]}/${parts[1]}/${parts[0]}';
+  final date = DateTime.tryParse(dateStr);
+  if (date == null) return dateStr;
+  return DateFormat.yMd(
+    Localizations.localeOf(context).toString(),
+  ).format(date);
 }
 
-String formatReadTime(String? readAt) {
+String formatReadTime(BuildContext context, String? readAt) {
   if (readAt == null) return '';
   final parsed = DateTime.tryParse(readAt);
   if (parsed == null) return '';
 
-  final local = parsed.toLocal();
-  final h = local.hour.toString().padLeft(2, '0');
-  final m = local.minute.toString().padLeft(2, '0');
-  return '$h:$m';
+  return DateFormat.jm(
+    Localizations.localeOf(context).toString(),
+  ).format(parsed.toLocal());
 }
 
 int _compareReads(ReadEntry a, ReadEntry b) {
@@ -135,14 +145,13 @@ List<ReadingDayGroup> groupReadsByDate(List<ReadEntry> reads) {
     groups.putIfAbsent(read.date, () => []).add(read);
   }
 
-  final entries = groups.entries.toList()
-    ..sort((a, b) => b.key.compareTo(a.key));
+  final entries =
+      groups.entries.toList()..sort((a, b) => b.key.compareTo(a.key));
 
   return entries
       .map(
         (entry) => ReadingDayGroup(
           date: entry.key,
-          label: formatDateLabel(entry.key),
           reads: [...entry.value]..sort(_compareReads),
         ),
       )
@@ -171,17 +180,19 @@ Panorama buildPanorama(List<ReadEntry> reads, String targetDate) {
   };
   final readCount = uniqueReads.length;
   final remaining = totalChapters - readCount;
-  final percentComplete = totalChapters == 0
-      ? 0.0
-      : (readCount / totalChapters * 1000).round() / 10;
+  final percentComplete =
+      totalChapters == 0
+          ? 0.0
+          : (readCount / totalChapters * 1000).round() / 10;
 
   final today = DateTime.now();
   final todayOnly = DateTime(today.year, today.month, today.day);
   final target = _parseTargetDate(targetDate);
   final daysRemaining = _daysBetween(todayOnly, target);
-  final chaptersPerDay = daysRemaining == 0
-      ? remaining.toDouble()
-      : (remaining / daysRemaining * 10).round() / 10;
+  final chaptersPerDay =
+      daysRemaining == 0
+          ? remaining.toDouble()
+          : (remaining / daysRemaining * 10).round() / 10;
 
   return Panorama(
     totalChapters: totalChapters,

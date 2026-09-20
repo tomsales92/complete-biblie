@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:intl/intl.dart';
+
 import '../data/brazil_states.dart';
+import '../l10n/app_localizations.dart';
 import '../models/user_profile.dart';
 import '../services/auth_service.dart';
 import '../services/theme_controller.dart';
@@ -31,8 +34,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   bool _isRegister = false;
+
+  bool get _confirmMismatch =>
+      _confirmPasswordController.text.isNotEmpty &&
+      _confirmPasswordController.text != _passwordController.text;
+
+  bool get _confirmMatches =>
+      _confirmPasswordController.text.isNotEmpty &&
+      _confirmPasswordController.text == _passwordController.text;
+
   bool _rememberEmail = true;
   bool _loading = false;
   String? _error;
@@ -51,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -93,13 +107,20 @@ class _LoginScreenState extends State<LoginScreen> {
     final name = _nameController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      setState(() => _error = 'Preencha e-mail e senha.');
+      setState(() => _error = AppLocalizations.of(context).fillEmailPassword);
       return;
     }
 
     if (_isRegister &&
         (name.isEmpty || _selectedState == null || _birthDate == null)) {
-      setState(() => _error = 'Preencha nome, estado e data de nascimento.');
+      setState(() => _error = AppLocalizations.of(context).fillRegisterFields);
+      return;
+    }
+
+    if (_isRegister && password != _confirmPasswordController.text) {
+      setState(
+        () => _error = AppLocalizations.of(context).errPasswordMismatch,
+      );
       return;
     }
 
@@ -129,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         await widget.authService.login(email, password);
       }
-      await _persistRememberedEmail();
+      if (!_isRegister) await _persistRememberedEmail();
     } on FirebaseAuthException catch (e) {
       setState(() => _error = _mapError(e.code));
     } finally {
@@ -140,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _forgotPassword() async {
     final email = _emailController.text.trim();
     if (email.isEmpty) {
-      setState(() => _error = 'Informe seu e-mail para redefinir a senha.');
+      setState(() => _error = AppLocalizations.of(context).enterEmailToReset);
       return;
     }
 
@@ -153,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await widget.authService.resetPassword(email);
       setState(() {
-        _info = 'Enviamos um e-mail com instruções para redefinir sua senha.';
+        _info = AppLocalizations.of(context).resetEmailSent;
       });
     } on FirebaseAuthException catch (e) {
       setState(() => _error = _mapError(e.code));
@@ -167,32 +188,42 @@ class _LoginScreenState extends State<LoginScreen> {
       _isRegister = !_isRegister;
       _error = null;
       _info = null;
+      // Leaving a form always resets it, submitted or not.
+      _emailController.clear();
+      _passwordController.clear();
+      _confirmPasswordController.clear();
+      _nameController.clear();
+      _selectedState = null;
+      _birthDate = null;
     });
+    if (!_isRegister) _loadRememberedEmail();
   }
 
   String _mapError(String? code) {
+    final l10n = AppLocalizations.of(context);
     switch (code) {
       case 'invalid-email':
-        return 'E-mail inválido.';
+        return l10n.errInvalidEmail;
       case 'user-not-found':
       case 'wrong-password':
       case 'invalid-credential':
-        return 'E-mail ou senha incorretos.';
+        return l10n.errWrongCredentials;
       case 'email-already-in-use':
-        return 'Este e-mail já está cadastrado.';
+        return l10n.errEmailInUse;
       case 'weak-password':
-        return 'A senha deve ter pelo menos 6 caracteres.';
+        return l10n.errWeakPassword;
       case 'network-request-failed':
-        return 'Sem conexão com a internet. Verifique sua rede e tente novamente.';
+        return l10n.errNetwork;
       case 'too-many-requests':
-        return 'Muitas tentativas. Aguarde um pouco e tente novamente.';
+        return l10n.errTooMany;
       default:
-        return 'Não foi possível concluir. Tente novamente.';
+        return l10n.errGeneric;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -216,21 +247,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(22),
                         ),
-                        child: Image.asset(
-                          'assets/icon/mark-transparent.png',
-                        ),
+                        child: Image.asset('assets/icon/mark-transparent.png'),
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'Complete Bible',
+                        l10n.appTitle,
                         textAlign: TextAlign.center,
                         style: textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 6),
                       Text(
                         _isRegister
-                            ? 'Crie sua conta'
-                            : 'De Gênesis a Apocalipse',
+                            ? l10n.createYourAccount
+                            : l10n.taglineGenesisRevelation,
                         textAlign: TextAlign.center,
                         style: textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurfaceVariant,
@@ -248,12 +277,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 TextField(
                                   controller: _nameController,
                                   enabled: !_loading,
-                                  textCapitalization:
-                                      TextCapitalization.words,
+                                  textCapitalization: TextCapitalization.words,
                                   autofillHints: const [AutofillHints.name],
-                                  decoration: const InputDecoration(
-                                    labelText: 'Nome',
-                                    hintText: 'Seu nome',
+                                  decoration: InputDecoration(
+                                    labelText: l10n.name,
+                                    hintText: l10n.yourName,
                                   ),
                                 ),
                                 const SizedBox(height: 14),
@@ -263,9 +291,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 enabled: !_loading,
                                 keyboardType: TextInputType.emailAddress,
                                 autofillHints: const [AutofillHints.email],
-                                decoration: const InputDecoration(
-                                  labelText: 'E-mail',
-                                  hintText: 'seu@email.com',
+                                decoration: InputDecoration(
+                                  labelText: l10n.email,
+                                  hintText: l10n.emailHint,
                                 ),
                               ),
                               const SizedBox(height: 14),
@@ -274,47 +302,85 @@ class _LoginScreenState extends State<LoginScreen> {
                                 enabled: !_loading,
                                 obscureText: true,
                                 autofillHints: const [AutofillHints.password],
-                                decoration: const InputDecoration(
-                                  labelText: 'Senha',
+                                decoration: InputDecoration(
+                                  labelText: l10n.password,
                                   hintText: '••••••••',
                                 ),
-                                onSubmitted: (_) => _submit(),
+                                onChanged: (_) {
+                                  if (_isRegister) setState(() {});
+                                },
+                                textInputAction: _isRegister
+                                    ? TextInputAction.next
+                                    : TextInputAction.done,
+                                onSubmitted: (_) {
+                                  if (!_isRegister) _submit();
+                                },
                               ),
                               if (_isRegister) ...[
                                 const SizedBox(height: 14),
+                                TextField(
+                                  controller: _confirmPasswordController,
+                                  enabled: !_loading,
+                                  obscureText: true,
+                                  onChanged: (_) => setState(() {}),
+                                  decoration: InputDecoration(
+                                    labelText: l10n.confirmPasswordField,
+                                    hintText: '••••••••',
+                                    errorText: _confirmMismatch
+                                        ? l10n.errPasswordMismatch
+                                        : null,
+                                    helperText: _confirmMatches
+                                        ? l10n.passwordsMatch
+                                        : null,
+                                    helperStyle: TextStyle(
+                                      color: scheme.primary,
+                                    ),
+                                    suffixIcon: _confirmMatches
+                                        ? Icon(
+                                            Icons.check_circle_rounded,
+                                            color: scheme.primary,
+                                          )
+                                        : null,
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
                                 DropdownButtonFormField<String>(
                                   value: _selectedState,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Estado',
+                                  decoration: InputDecoration(
+                                    labelText: l10n.state,
                                   ),
-                                  items: brazilStates
-                                      .map(
-                                        (state) => DropdownMenuItem(
-                                          value: state.code,
-                                          child: Text(state.name),
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: _loading
-                                      ? null
-                                      : (value) => setState(
-                                          () => _selectedState = value,
-                                        ),
+                                  items:
+                                      brazilStates
+                                          .map(
+                                            (state) => DropdownMenuItem(
+                                              value: state.code,
+                                              child: Text(state.name),
+                                            ),
+                                          )
+                                          .toList(),
+                                  onChanged:
+                                      _loading
+                                          ? null
+                                          : (value) => setState(
+                                            () => _selectedState = value,
+                                          ),
                                 ),
                                 const SizedBox(height: 14),
                                 InkWell(
                                   onTap: _loading ? null : _pickBirthDate,
                                   borderRadius: BorderRadius.circular(18),
                                   child: InputDecorator(
-                                    decoration: const InputDecoration(
-                                      labelText: 'Data de nascimento',
+                                    decoration: InputDecoration(
+                                      labelText: l10n.birthDate,
                                     ),
                                     child: Text(
                                       _birthDate == null
-                                          ? 'Selecionar data'
-                                          : '${_birthDate!.day.toString().padLeft(2, '0')}/'
-                                                '${_birthDate!.month.toString().padLeft(2, '0')}/'
-                                                '${_birthDate!.year}',
+                                          ? l10n.selectDate
+                                          : DateFormat.yMd(
+                                            Localizations.localeOf(
+                                              context,
+                                            ).toString(),
+                                          ).format(_birthDate!),
                                     ),
                                   ),
                                 ),
@@ -322,12 +388,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (!_isRegister)
                                 CheckboxListTile(
                                   value: _rememberEmail,
-                                  onChanged: _loading
-                                      ? null
-                                      : (value) => setState(
-                                          () => _rememberEmail = value ?? true,
-                                        ),
-                                  title: const Text('Lembrar meu e-mail'),
+                                  onChanged:
+                                      _loading
+                                          ? null
+                                          : (value) => setState(
+                                            () =>
+                                                _rememberEmail = value ?? true,
+                                          ),
+                                  title: Text(l10n.rememberEmail),
                                   controlAffinity:
                                       ListTileControlAffinity.leading,
                                   contentPadding: EdgeInsets.zero,
@@ -359,25 +427,25 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onPressed: _loading ? null : _submit,
                                 child: Text(
                                   _loading
-                                      ? 'Aguarde...'
+                                      ? l10n.pleaseWait
                                       : (_isRegister
-                                            ? 'Criar conta'
-                                            : 'Entrar'),
+                                          ? l10n.createAccount
+                                          : l10n.signIn),
                                 ),
                               ),
                               if (!_isRegister) ...[
                                 const SizedBox(height: 4),
                                 TextButton(
                                   onPressed: _loading ? null : _forgotPassword,
-                                  child: const Text('Esqueci minha senha'),
+                                  child: Text(l10n.forgotPassword),
                                 ),
                               ],
                               TextButton(
                                 onPressed: _loading ? null : _toggleMode,
                                 child: Text(
                                   _isRegister
-                                      ? 'Já tenho conta — entrar'
-                                      : 'Criar uma conta',
+                                      ? l10n.haveAccountSignIn
+                                      : l10n.createAnAccount,
                                 ),
                               ),
                             ],

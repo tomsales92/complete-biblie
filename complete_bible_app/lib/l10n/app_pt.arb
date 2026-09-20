@@ -1,0 +1,103 @@
+{
+  "@@locale": "pt",
+  "appTitle": "Complete Bible",
+  "taglineGenesisRevelation": "De Gênesis a Apocalipse",
+  "createYourAccount": "Crie sua conta",
+  "name": "Nome",
+  "yourName": "Seu nome",
+  "email": "E-mail",
+  "emailHint": "seu@email.com",
+  "password": "Senha",
+  "state": "Estado",
+  "birthDate": "Data de nascimento",
+  "selectDate": "Selecionar data",
+  "rememberEmail": "Lembrar meu e-mail",
+  "pleaseWait": "Aguarde...",
+  "createAccount": "Criar conta",
+  "signIn": "Entrar",
+  "forgotPassword": "Esqueci minha senha",
+  "haveAccountSignIn": "Já tenho conta — entrar",
+  "createAnAccount": "Criar uma conta",
+  "fillEmailPassword": "Preencha e-mail e senha.",
+  "fillRegisterFields": "Preencha nome, estado e data de nascimento.",
+  "enterEmailToReset": "Informe seu e-mail para redefinir a senha.",
+  "resetEmailSent": "Enviamos um e-mail com instruções para redefinir sua senha.",
+  "errInvalidEmail": "E-mail inválido.",
+  "errWrongCredentials": "E-mail ou senha incorretos.",
+  "errEmailInUse": "Este e-mail já está cadastrado.",
+  "errWeakPassword": "A senha deve ter pelo menos 6 caracteres.",
+  "errNetwork": "Sem conexão com a internet. Verifique sua rede e tente novamente.",
+  "errTooMany": "Muitas tentativas. Aguarde um pouco e tente novamente.",
+  "errGeneric": "Não foi possível concluir. Tente novamente.",
+  "settings": "Configurações",
+  "account": "Conta",
+  "dangerZone": "Zona de risco",
+  "deleteAccount": "Excluir conta",
+  "deleteAccountSubtitle": "Remove permanentemente sua conta e seu histórico de leitura.",
+  "deleteAccountWarning": "Isso vai apagar permanentemente sua conta e todo o seu histórico de leitura. Essa ação não pode ser desfeita.",
+  "cancel": "Cancelar",
+  "delete": "Excluir",
+  "confirm": "Confirmar",
+  "confirmPassword": "Confirme sua senha",
+  "wrongPassword": "Senha incorreta.",
+  "deleteFailed": "Não foi possível excluir a conta. Tente novamente.",
+  "hello": "Olá, {name}",
+  "@hello": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "signOut": "Sair",
+  "yourBook": "Seu livro",
+  "book": "Livro",
+  "noChaptersToday": "Nenhum capítulo lido hoje",
+  "readToday": "Lido hoje: {count, plural, =1{1 capítulo} other{{count} capítulos}}",
+  "@readToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorWithMessage": "Erro: {message}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "readingHistory": "Histórico de leitura",
+  "chaptersCount": "{count, plural, =1{1 capítulo} other{{count} capítulos}}",
+  "@chaptersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noReadsYet": "Nenhuma leitura registrada ainda.",
+  "chapAbbrev": "{count} cap.",
+  "@chapAbbrev": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "today": "Hoje",
+  "yesterday": "Ontem",
+  "panorama": "PANORAMA",
+  "statRead": "Lidos",
+  "statRemaining": "Faltam",
+  "statChaptersPerDay": "Cap./dia",
+  "statDaysRemaining": "Dias restantes",
+  "completed": "concluído",
+  "lightTheme": "Tema claro",
+  "darkTheme": "Tema escuro",
+  "confirmPasswordField": "Confirmar senha",
+  "errPasswordMismatch": "As senhas não coincidem.",
+  "passwordsMatch": "As senhas coincidem."
+}

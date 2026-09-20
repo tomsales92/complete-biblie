@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../data/bible_data.dart';
+import '../data/book_names.dart';
+import '../l10n/app_localizations.dart';
 import '../models/bible_book.dart';
 import '../models/panorama.dart';
 import '../models/read_entry.dart';
@@ -122,9 +124,11 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erro: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context).errorWithMessage('$e')),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _togglingChapter = null);
@@ -138,83 +142,115 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _pickBook() async {
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder:
+          (context) => DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.7,
+            maxChildSize: 0.9,
+            builder:
+                (context, controller) => ListView(
+                  controller: controller,
+                  children: [
+                    for (final book in bibleBooks)
+                      ListTile(
+                        title: Text(localizedBookName(context, book.name)),
+                        selected: book.name == _selectedBook,
+                        onTap: () => Navigator.of(context).pop(book.name),
+                      ),
+                  ],
+                ),
+          ),
+    );
+    if (picked != null && mounted) setState(() => _selectedBook = picked);
+  }
+
   void _openSettings() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => SettingsScreen(
-          user: widget.user,
-          authService: widget.authService,
-          bibleService: widget.bibleService,
-          userProfileService: widget.userProfileService,
-        ),
+        builder:
+            (context) => SettingsScreen(
+              user: widget.user,
+              authService: widget.authService,
+              bibleService: widget.bibleService,
+              userProfileService: widget.userProfileService,
+            ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
-        child: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: _loadAll,
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-                  children: [
-                    _Header(
-                      greeting: (_profileName?.isNotEmpty ?? false)
-                          ? 'Olá, $_profileName'
-                          : widget.user.email,
-                      onLogout: () => widget.authService.logout(),
-                      onOpenSettings: _openSettings,
-                      themeController: widget.themeController,
-                    ),
-                    const SizedBox(height: 20),
-                    PanoramaCard(
-                      panorama: _panorama,
-                      targetDate: _targetDate,
-                      onTargetDateChanged: _onTargetDateChanged,
-                    ),
-                    const SizedBox(height: 14),
-                    _TodayPill(count: _todayReads.length),
-                    const SizedBox(height: 14),
-                    HistorySection(
-                      history: _readingHistory,
-                      totalReads: _reads.length,
-                    ),
-                    const SizedBox(height: 28),
-                    Text(
-                      'Seu livro',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: _selectedBook,
-                      decoration: const InputDecoration(labelText: 'Livro'),
-                      items: bibleBooks
-                          .map(
-                            (book) => DropdownMenuItem(
-                              value: book.name,
-                              child: Text(book.name),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value == null) return;
-                        setState(() => _selectedBook = value);
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ChapterGrid(
-                      chapterCount: _selectedBookInfo.chapters,
-                      isChapterRead: _isChapterRead,
-                      togglingChapter: _togglingChapter,
-                      onToggle: _toggleChapter,
-                    ),
-                  ],
+        child:
+            _loading
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                  onRefresh: _loadAll,
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+                    children: [
+                      _Header(
+                        greeting:
+                            (_profileName?.isNotEmpty ?? false)
+                                ? l10n.hello(_profileName!)
+                                : widget.user.email,
+                        onLogout: () => widget.authService.logout(),
+                        onOpenSettings: _openSettings,
+                        themeController: widget.themeController,
+                      ),
+                      const SizedBox(height: 20),
+                      PanoramaCard(
+                        panorama: _panorama,
+                        targetDate: _targetDate,
+                        onTargetDateChanged: _onTargetDateChanged,
+                      ),
+                      const SizedBox(height: 14),
+                      _TodayPill(count: _todayReads.length),
+                      const SizedBox(height: 14),
+                      HistorySection(
+                        history: _readingHistory,
+                        totalReads: _reads.length,
+                      ),
+                      const SizedBox(height: 28),
+                      Text(
+                        l10n.yourBook,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 12),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: _pickBook,
+                        child: InputDecorator(
+                          decoration: InputDecoration(labelText: l10n.book),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  localizedBookName(context, _selectedBook),
+                                ),
+                              ),
+                              const Icon(Icons.arrow_drop_down),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ChapterGrid(
+                        chapterCount: _selectedBookInfo.chapters,
+                        isChapterRead: _isChapterRead,
+                        togglingChapter: _togglingChapter,
+                        onToggle: _toggleChapter,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
       ),
     );
   }
@@ -238,42 +274,50 @@ class _Header extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Complete Bible',
-                style: textTheme.headlineSmall,
-              ),
-              if (greeting != null) ...[
-                const SizedBox(height: 2),
-                Text(
-                  greeting!,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context).appTitle,
+                    style: textTheme.headlineSmall,
                   ),
-                ),
-              ],
-            ],
-          ),
+                  if (greeting != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      greeting!,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            ThemeToggleButton(themeController: themeController),
+            const SizedBox(width: 4),
+            IconButton(
+              tooltip: AppLocalizations.of(context).signOut,
+              icon: const Icon(Icons.logout_rounded, size: 20),
+              onPressed: onLogout,
+            ),
+          ],
         ),
-        const SizedBox(width: 8),
-        ThemeToggleButton(themeController: themeController),
-        const SizedBox(width: 8),
-        IconButton(
-          tooltip: 'Configurações',
-          icon: const Icon(Icons.settings_outlined, size: 20),
+        const SizedBox(height: 8),
+        TextButton.icon(
           onPressed: onOpenSettings,
-        ),
-        const SizedBox(width: 4),
-        IconButton(
-          tooltip: 'Sair',
-          icon: const Icon(Icons.logout_rounded, size: 20),
-          onPressed: onLogout,
+          icon: const Icon(Icons.settings_outlined, size: 20),
+          label: Text(AppLocalizations.of(context).settings),
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+          ),
         ),
       ],
     );
@@ -310,8 +354,8 @@ class _TodayPill extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             count == 0
-                ? 'Nenhum capítulo lido hoje'
-                : 'Lido hoje: $count capítulo${count == 1 ? '' : 's'}',
+                ? AppLocalizations.of(context).noChaptersToday
+                : AppLocalizations.of(context).readToday(count),
             style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
         ],

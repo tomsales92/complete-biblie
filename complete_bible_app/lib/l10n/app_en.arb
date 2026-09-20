@@ -1,0 +1,103 @@
+{
+  "@@locale": "en",
+  "appTitle": "Complete Bible",
+  "taglineGenesisRevelation": "From Genesis to Revelation",
+  "createYourAccount": "Create your account",
+  "name": "Name",
+  "yourName": "Your name",
+  "email": "Email",
+  "emailHint": "you@email.com",
+  "password": "Password",
+  "state": "State",
+  "birthDate": "Date of birth",
+  "selectDate": "Select date",
+  "rememberEmail": "Remember my email",
+  "pleaseWait": "Please wait...",
+  "createAccount": "Create account",
+  "signIn": "Sign in",
+  "forgotPassword": "Forgot my password",
+  "haveAccountSignIn": "I already have an account — sign in",
+  "createAnAccount": "Create an account",
+  "fillEmailPassword": "Enter your email and password.",
+  "fillRegisterFields": "Enter your name, state and date of birth.",
+  "enterEmailToReset": "Enter your email to reset your password.",
+  "resetEmailSent": "We sent you an email with instructions to reset your password.",
+  "errInvalidEmail": "Invalid email.",
+  "errWrongCredentials": "Incorrect email or password.",
+  "errEmailInUse": "This email is already registered.",
+  "errWeakPassword": "Password must be at least 6 characters.",
+  "errNetwork": "No internet connection. Check your network and try again.",
+  "errTooMany": "Too many attempts. Please wait a moment and try again.",
+  "errGeneric": "Something went wrong. Please try again.",
+  "settings": "Settings",
+  "account": "Account",
+  "dangerZone": "Danger zone",
+  "deleteAccount": "Delete account",
+  "deleteAccountSubtitle": "Permanently removes your account and reading history.",
+  "deleteAccountWarning": "This will permanently delete your account and all your reading history. This action cannot be undone.",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "confirm": "Confirm",
+  "confirmPassword": "Confirm your password",
+  "wrongPassword": "Incorrect password.",
+  "deleteFailed": "Could not delete the account. Please try again.",
+  "hello": "Hello, {name}",
+  "signOut": "Sign out",
+  "yourBook": "Your book",
+  "book": "Book",
+  "noChaptersToday": "No chapters read today",
+  "readToday": "Read today: {count, plural, =1{1 chapter} other{{count} chapters}}",
+  "errorWithMessage": "Error: {message}",
+  "readingHistory": "Reading history",
+  "chaptersCount": "{count, plural, =1{1 chapter} other{{count} chapters}}",
+  "noReadsYet": "No readings recorded yet.",
+  "chapAbbrev": "{count} ch.",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "panorama": "OVERVIEW",
+  "statRead": "Read",
+  "statRemaining": "Left",
+  "statChaptersPerDay": "Ch./day",
+  "statDaysRemaining": "Days left",
+  "completed": "complete",
+  "lightTheme": "Light theme",
+  "darkTheme": "Dark theme",
+  "@hello": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@readToday": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@errorWithMessage": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "@chaptersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@chapAbbrev": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "confirmPasswordField": "Confirm password",
+  "errPasswordMismatch": "Passwords do not match.",
+  "passwordsMatch": "Passwords match."
+}

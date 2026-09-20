@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../data/bible_data.dart';
+import '../data/book_names.dart';
+import '../l10n/app_localizations.dart';
 import '../models/reading_day_group.dart';
 
 class HistorySection extends StatelessWidget {
@@ -15,14 +17,16 @@ class HistorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
 
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Theme(
-        data: Theme.of(
-          context,
-        ).copyWith(dividerColor: Colors.transparent, splashColor: Colors.transparent),
+        data: Theme.of(context).copyWith(
+          dividerColor: Colors.transparent,
+          splashColor: Colors.transparent,
+        ),
         child: ExpansionTile(
           shape: const RoundedRectangleBorder(side: BorderSide.none),
           collapsedShape: const RoundedRectangleBorder(side: BorderSide.none),
@@ -34,24 +38,29 @@ class HistorySection extends StatelessWidget {
               color: scheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.history_rounded, size: 20, color: scheme.secondary),
+            child: Icon(
+              Icons.history_rounded,
+              size: 20,
+              color: scheme.secondary,
+            ),
           ),
           title: Text(
-            'Histórico de leitura',
+            l10n.readingHistory,
             style: Theme.of(
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
-          subtitle: Text('$totalReads capítulos'),
+          subtitle: Text(l10n.chaptersCount(totalReads)),
           childrenPadding: const EdgeInsets.fromLTRB(24, 0, 20, 20),
-          children: history.isEmpty
-              ? [
-                  Text(
-                    'Nenhuma leitura registrada ainda.',
-                    style: TextStyle(color: scheme.onSurfaceVariant),
-                  ),
-                ]
-              : history.map((day) => _HistoryDay(day: day)).toList(),
+          children:
+              history.isEmpty
+                  ? [
+                    Text(
+                      l10n.noReadsYet,
+                      style: TextStyle(color: scheme.onSurfaceVariant),
+                    ),
+                  ]
+                  : history.map((day) => _HistoryDay(day: day)).toList(),
         ),
       ),
     );
@@ -65,6 +74,7 @@ class _HistoryDay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
 
@@ -85,12 +95,14 @@ class _HistoryDay extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                day.label,
-                style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                formatDateLabel(context, day.date),
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const Spacer(),
               Text(
-                '${day.reads.length} cap.',
+                l10n.chapAbbrev(day.reads.length),
                 style: textTheme.bodySmall?.copyWith(
                   color: scheme.onSurfaceVariant,
                 ),
@@ -102,26 +114,32 @@ class _HistoryDay extends StatelessWidget {
             padding: const EdgeInsets.only(left: 18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: day.reads
-                  .map(
-                    (read) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('${read.book} ${read.chapter}'),
-                          if (formatReadTime(read.readAt).isNotEmpty)
-                            Text(
-                              formatReadTime(read.readAt),
-                              style: textTheme.bodySmall?.copyWith(
-                                color: scheme.onSurfaceVariant,
+              children:
+                  day.reads
+                      .map(
+                        (read) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${localizedBookName(context, read.book)} ${read.chapter}',
                               ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
+                              if (formatReadTime(
+                                context,
+                                read.readAt,
+                              ).isNotEmpty)
+                                Text(
+                                  formatReadTime(context, read.readAt),
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: scheme.onSurfaceVariant,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
             ),
           ),
         ],

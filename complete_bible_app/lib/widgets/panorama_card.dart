@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:intl/intl.dart';
+
+import '../l10n/app_localizations.dart';
 import '../models/panorama.dart';
 
 class PanoramaCard extends StatelessWidget {
@@ -28,6 +31,7 @@ class PanoramaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final p = panorama;
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -42,7 +46,7 @@ class PanoramaCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'PANORAMA',
+                  l10n.panorama,
                   style: textTheme.labelMedium?.copyWith(
                     color: scheme.onSurfaceVariant,
                     letterSpacing: 1.4,
@@ -67,9 +71,9 @@ class PanoramaCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          '${targetDate.day.toString().padLeft(2, '0')}/'
-                          '${targetDate.month.toString().padLeft(2, '0')}/'
-                          '${targetDate.year}',
+                          DateFormat.yMd(
+                            Localizations.localeOf(context).toString(),
+                          ).format(targetDate),
                           style: textTheme.labelMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -95,7 +99,7 @@ class PanoramaCard extends StatelessWidget {
                     child: _StatTile(
                       icon: Icons.menu_book_rounded,
                       value: '${p.readChapters}/${p.totalChapters}',
-                      label: 'Lidos',
+                      label: l10n.statRead,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -103,7 +107,7 @@ class PanoramaCard extends StatelessWidget {
                     child: _StatTile(
                       icon: Icons.hourglass_bottom_rounded,
                       value: '${p.remainingChapters}',
-                      label: 'Faltam',
+                      label: l10n.statRemaining,
                     ),
                   ),
                 ],
@@ -115,7 +119,7 @@ class PanoramaCard extends StatelessWidget {
                     child: _StatTile(
                       icon: Icons.speed_rounded,
                       value: '${p.chaptersPerDay}',
-                      label: 'Cap./dia',
+                      label: l10n.statChaptersPerDay,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -123,7 +127,7 @@ class PanoramaCard extends StatelessWidget {
                     child: _StatTile(
                       icon: Icons.calendar_today_rounded,
                       value: '${p.daysRemaining}',
-                      label: 'Dias restantes',
+                      label: l10n.statDaysRemaining,
                     ),
                   ),
                 ],
@@ -172,10 +176,10 @@ class _ProgressRing extends StatelessWidget {
                 ),
               ),
               Text(
-                'concluído',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+                AppLocalizations.of(context).completed,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
               ),
             ],
           ),
@@ -219,7 +223,9 @@ class _StatTile extends StatelessWidget {
           ),
           Text(
             label,
-            style: textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+            style: textTheme.bodySmall?.copyWith(
+              color: scheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
